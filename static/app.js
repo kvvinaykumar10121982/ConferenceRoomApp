@@ -333,8 +333,8 @@ function initReschedule() {
       closeReschedule();
       loadBookings();
     } catch (err) {
-      const kind = err.status === 409 ? 'Time conflict' : 'Could not reschedule';
-      toast(err.message, 'error', kind);
+      const title = err.status === 409 ? 'Time conflict' : 'Reschedule failed';
+      toast(`Request could not be rescheduled — ${err.message}`, 'error', title);
     }
   });
 }
