@@ -271,11 +271,6 @@ function renderBookings(bookings) {
     const isScheduled = b.status === 'scheduled';
     const actions = el('div', { class: 'actions' }, [
       el('button', {
-        class: 'btn btn-sm', type: 'button',
-        disabled: isScheduled ? null : 'disabled',
-        onclick: () => openReschedule(b),
-      }, 'Reschedule'),
-      el('button', {
         class: 'btn btn-sm btn-danger', type: 'button',
         disabled: isScheduled ? null : 'disabled',
         onclick: () => cancelBooking(b),
