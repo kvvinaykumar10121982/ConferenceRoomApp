@@ -1,5 +1,5 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ConferenceRoom(db.Model):
     __tablename__ = 'conference_rooms'
@@ -90,7 +90,7 @@ class Booking(db.Model):
     meeting_title = db.Column(db.String(200))
     attendees = db.Column(db.Integer, default=1)
     status = db.Column(db.String(20), default='scheduled')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self):
         """Serialize this booking to a JSON-ready dict.

@@ -91,7 +91,7 @@ def get_booking(booking_id):
     cURL:
         curl http://localhost:5000/bookings/1
     """
-    booking = Booking.query.get(booking_id)
+    booking = db.session.get(Booking, booking_id)
     if not booking:
         return jsonify({'data': None, 'error': 'Booking not found', 'status': 404}), 404
     return jsonify({'data': booking.to_dict(), 'error': None, 'status': 200})
@@ -232,7 +232,7 @@ def reschedule_booking(booking_id):
           -H "Content-Type: application/json" \\
           -d '{"start_time":"2025-07-10T16:00:00","end_time":"2025-07-10T17:00:00"}'
     """
-    booking = Booking.query.get(booking_id)
+    booking = db.session.get(Booking, booking_id)
     if not booking:
         return jsonify({'data': None, 'error': 'Booking not found', 'status': 404}), 404
     data = request.get_json()
@@ -290,7 +290,7 @@ def cancel_booking(booking_id):
     cURL:
         curl -X DELETE http://localhost:5000/bookings/1
     """
-    booking = Booking.query.get(booking_id)
+    booking = db.session.get(Booking, booking_id)
     if not booking:
         return jsonify({'data': None, 'error': 'Booking not found', 'status': 404}), 404
     booking.status = 'cancelled'

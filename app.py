@@ -2,7 +2,7 @@ from flask import Flask
 from extensions import db
 import os
 
-def create_app():
+def create_app(test_config=None):
     """Build and configure the Flask application (application factory).
 
     Purpose:
@@ -12,8 +12,11 @@ def create_app():
         factory keeps global state out of import time and makes testing easy.
 
     Args:
-        None: Configuration is derived from the module location; there are no
-            parameters.
+        test_config (dict, optional): Config overrides applied on top of the
+            defaults before the database is bound. Tests pass this to swap in
+            an in-memory SQLite database, e.g.
+            ``{"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"}``.
+            Defaults to None (production/dev file-backed database).
 
     Returns:
         flask.Flask: A ready-to-serve application instance with all routes
@@ -24,8 +27,9 @@ def create_app():
             >>> app = create_app()
             >>> app.run(debug=True)  # doctest: +SKIP
 
-        Example 2 - drive it with the test client (no network):
-            >>> app = create_app()
+        Example 2 - build a test app on an in-memory database:
+            >>> app = create_app({"TESTING": True,
+            ...                   "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"})
             >>> app.test_client().get("/health").status_code
             200
 
@@ -40,6 +44,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'db', 'bookings.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'workshop-secret-key'
+    if test_config:
+        app.config.update(test_config)
 
     db.init_app(app)
 

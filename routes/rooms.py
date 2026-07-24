@@ -82,7 +82,7 @@ def get_room(room_id):
     cURL:
         curl http://localhost:5000/rooms/1
     """
-    room = ConferenceRoom.query.get(room_id)
+    room = db.session.get(ConferenceRoom, room_id)
     if not room:
         return jsonify({'data': None, 'error': 'Room not found', 'status': 404}), 404
     return jsonify({'data': room.to_dict(), 'error': None, 'status': 200})
@@ -189,7 +189,7 @@ def get_free_slots(room_id):
         curl "http://localhost:5000/rooms/1/free-slots"
         curl "http://localhost:5000/rooms/1/free-slots?date=2025-07-01"
     """
-    room = ConferenceRoom.query.get(room_id)
+    room = db.session.get(ConferenceRoom, room_id)
     if not room:
         return jsonify({'data': None, 'error': 'Room not found', 'status': 404}), 404
 
