@@ -25,7 +25,7 @@ class ConferenceRoom(db.Model):
 
         Examples:
             Example 1 - serialize a fetched room:
-                >>> room = ConferenceRoom.query.get(1)
+                >>> room = db.session.get(ConferenceRoom, 1)
                 >>> room.to_dict()["name"]
                 'Azure Hall'
 
@@ -65,7 +65,7 @@ class Employee(db.Model):
 
         Examples:
             Example 1 - serialize a fetched employee:
-                >>> emp = Employee.query.get(1)
+                >>> emp = db.session.get(Employee, 1)
                 >>> emp.to_dict()["email"]
                 'alice.thompson@corp.com'
 
@@ -110,12 +110,12 @@ class Booking(db.Model):
 
         Examples:
             Example 1 - serialize a fetched booking:
-                >>> b = Booking.query.get(1)
+                >>> b = db.session.get(Booking, 1)
                 >>> b.to_dict()["start_time"]
                 '2025-07-01T18:00:00'
 
             Example 2 - status is included in the payload:
-                >>> Booking.query.get(1).to_dict()["status"]
+                >>> db.session.get(Booking, 1).to_dict()["status"]
                 'scheduled'
 
         Browser / cURL:
