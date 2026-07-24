@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from extensions import db
 import os
 
@@ -51,8 +51,33 @@ def create_app(test_config=None):
 
     from routes.bookings import bookings_bp
     from routes.rooms import rooms_bp
+    from routes.employees import employees_bp
     app.register_blueprint(bookings_bp)
     app.register_blueprint(rooms_bp)
+    app.register_blueprint(employees_bp)
+
+    @app.route('/')
+    def index():
+        """Serve the single-page booking UI.
+
+        Purpose:
+            Return the static ``index.html`` that boots the front-end. The SPA
+            then calls the JSON API (``/rooms``, ``/employees``, ``/bookings``,
+            ...) from the same origin, so no CORS configuration is needed.
+
+        Args:
+            None: This route takes no path or query parameters.
+
+        Returns:
+            flask.Response: The ``static/index.html`` file with HTTP 200.
+
+        Browser:
+            http://localhost:5000/
+
+        cURL:
+            curl http://localhost:5000/
+        """
+        return send_from_directory(app.static_folder, 'index.html')
 
     @app.route('/health')
     def health():

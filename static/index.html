@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conference Room Booking</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">📅</span>
+      <div>
+        <h1>Conference Room Booking</h1>
+        <p class="subtitle">Reserve shared meeting rooms &mdash; 09:00 to 18:00, 30-minute slots</p>
+      </div>
+    </div>
+    <div class="header-status">
+      <span id="apiStatus" class="status-dot" title="API status">&bull;</span>
+      <span id="apiStatusText">Connecting&hellip;</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab is-active" data-tab="book" role="tab">Book a room</button>
+    <button class="tab" data-tab="bookings" role="tab">Bookings</button>
+    <button class="tab" data-tab="rooms" role="tab">Rooms</button>
+  </nav>
+
+  <main class="container">
+
+    <!-- BOOK TAB -->
+    <section id="tab-book" class="tab-panel is-active">
+      <div class="grid">
+        <div class="card">
+          <h2>New booking</h2>
+          <form id="bookingForm" novalidate>
+            <div class="field">
+              <label for="f-room">Room</label>
+              <select id="f-room" name="room_id" required></select>
+            </div>
+            <div class="field">
+              <label for="f-organizer">Organizer</label>
+              <select id="f-organizer" name="organizer_id" required></select>
+            </div>
+            <div class="field">
+              <label for="f-date">Date</label>
+              <input type="date" id="f-date" name="date" required />
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="f-start">Start</label>
+                <input type="time" id="f-start" name="start" step="1800" required />
+              </div>
+              <div class="field">
+                <label for="f-end">End</label>
+                <input type="time" id="f-end" name="end" step="1800" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-title">Meeting title</label>
+              <input type="text" id="f-title" name="meeting_title" maxlength="200" placeholder="e.g. Design Review" />
+            </div>
+            <div class="field">
+              <label for="f-attendees">Attendees</label>
+              <input type="number" id="f-attendees" name="attendees" min="1" value="1" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="createBtn">Create booking</button>
+              <button type="reset" class="btn btn-ghost">Reset</button>
+            </div>
+            <p class="form-hint" id="capacityHint"></p>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Find free slots</h2>
+          <p class="muted">Pick a room and date to see open 30-minute slots. Click a slot to fill the form.</p>
+          <div class="row">
+            <div class="field">
+              <label for="fs-room">Room</label>
+              <select id="fs-room"></select>
+            </div>
+            <div class="field">
+              <label for="fs-date">Date</label>
+              <input type="date" id="fs-date" />
+            </div>
+          </div>
+          <button class="btn" id="checkSlotsBtn">Check availability</button>
+          <div id="slotsResult" class="slots-result"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOOKINGS TAB -->
+    <section id="tab-bookings" class="tab-panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>Bookings</h2>
+          <div class="filters">
+            <select id="filter-room"><option value="">All rooms</option></select>
+            <select id="filter-organizer"><option value="">All organizers</option></select>
+            <label class="checkbox"><input type="checkbox" id="filter-hide-cancelled" checked /> Hide cancelled</label>
+            <button class="btn btn-sm" id="refreshBookingsBtn">Refresh</button>
+          </div>
+        </div>
+        <div id="bookingsResult"></div>
+      </div>
+    </section>
+
+    <!-- ROOMS TAB -->
+    <section id="tab-rooms" class="tab-panel">
+      <div class="card">
+        <h2>Rooms</h2>
+        <div id="roomsResult" class="rooms-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Reschedule modal -->
+  <div class="modal-overlay" id="rescheduleModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rescheduleTitle">
+      <h3 id="rescheduleTitle">Reschedule booking</h3>
+      <p class="muted" id="rescheduleMeta"></p>
+      <form id="rescheduleForm">
+        <input type="hidden" id="r-id" />
+        <div class="field">
+          <label for="r-date">Date</label>
+          <input type="date" id="r-date" required />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="r-start">Start</label>
+            <input type="time" id="r-start" step="1800" required />
+          </div>
+          <div class="field">
+            <label for="r-end">End</label>
+            <input type="time" id="r-end" step="1800" required />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
